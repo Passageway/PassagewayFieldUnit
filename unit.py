@@ -28,8 +28,8 @@ def main():
     while True:
         if GPIO.event_detected(BEAM_1):
             #poll to see if this is a fall
-            if not GPIO.input(BEAM_1):
-                print "Beam 1 Fall"
+            if GPIO.input(BEAM_1):
+                print "Beam 1 Fall at " + beam2Fall.strftime("%Y-%m-%d %H:%M:%S")"
                 beam1Fall = datetime.datetime.now()
                 #if other beam is tripped then don't do anything
                 if not GPIO.input(BEAM_2):
@@ -37,9 +37,10 @@ def main():
                 
         if GPIO.event_detected(BEAM_2):
             #poll to see if this is a fall
-            if not GPIO.input(BEAM_2):
+            if GPIO.input(BEAM_2):
                 beam2Fall = datetime.datetime.now()
-                print "Beam 2 Fall at " + beam2Fall
+                print "Beam 2 Fall at " + beam2Fall.strftime("%Y-%m-%d %H:%M:%S")
+
                 #if other beam is tripped then don't do anything
                 if not GPIO.input(BEAM_1):
                     analyze_event(beam1Fall,beam2Fall)
@@ -59,7 +60,7 @@ def gpio_setup():
 #    return
 
 def analyze_event(): 
-    #ensure time between the two falls is reasonable
+    print "Analyzing Event"
     return
 
 #python handles this functionality completely with the > operator    
