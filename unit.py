@@ -19,35 +19,40 @@ def main():
     start = datetime.datetime.now()
     end = datetime.datetime.now()
     
+    beam1Fall = 0;
+    beam2Fall = 0;
+    
     gpio_setup()
     print "GPIO is setup"
     
     while True:
         if GPIO.event_detected(BEAM_1):
-            print "Beam 1 Fall"
-            beam1Fall = datetime.datetime.now()
-            #if other beam is tripped then don't do anything
-            if !(GPIO.input(BEAM_2)):
-                analyze_event(beam1Fall,beam2Fall)
+            #poll to see if this is a fall
+            if not GPIO.input(BEAM_1):
+                print "Beam 1 Fall"
+                beam1Fall = datetime.datetime.now()
+                #if other beam is tripped then don't do anything
+                if not GPIO.input(BEAM_2):
+                    analyze_event(beam1Fall,beam2Fall)
                 
         if GPIO.event_detected(BEAM_2):
-            print "Beam 2 Fall"
-            beam2Fall = datetime.datetime.now()
-            print "Beam 2 Fall at " + beam2Fall
-            #if other beam is tripped then don't do anything
-            if !GPIO.input(BEAM_1):
-                analyze_event(beam1Fall,beam2Fall)
+            #poll to see if this is a fall
+            if not GPIO.input(BEAM_2):
+                beam2Fall = datetime.datetime.now()
+                print "Beam 2 Fall at " + beam2Fall
+                #if other beam is tripped then don't do anything
+                if not GPIO.input(BEAM_1):
+                    analyze_event(beam1Fall,beam2Fall)
             
 def gpio_setup():
     
     GPIO.setup(BEAM_1,GPIO.IN)
-    #GPIO.add_event_detect(BEAM_1, GPIO.FALLING)
-    #GPIO.add_event_detect("XIO-P2", GPIO.FALLING, myfuncallback)
-    GPIO.wait_for_edge(BEAM_1, GPIO.FALLING)
+    GPIO.add_event_detect(BEAM_1, GPIO.FALLING)
+    #GPIO.add_event_detect(BEAM_1, GPIO.FALLING, myfuncallback)
     
     GPIO.setup(BEAM_2,GPIO.IN)
-    #GPIO.add_event_detect(BEAM_2, GPIO.FALLING)
-    GPIO.wait_for_edge(BEAM_2, GPIO.FALLING)
+    GPIO.add_event_detect(BEAM_2, GPIO.FALLING)
+    #GPIO.add_event_detect(BEAM_2, GPIO.FALLING, myfuncallback)
 
 #python's datetime.now() performs this function completely
 #def set_time():
