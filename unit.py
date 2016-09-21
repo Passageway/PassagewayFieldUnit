@@ -13,7 +13,7 @@ import CHIP_IO.GPIO as GPIO
 import datetime
 
 BEAM_1 = "XIO-P0"
-BEAM_2 = "XIO-P6"
+BEAM_2 = "XIO-P1"
 
 def main():
     start = datetime.datetime.now()
@@ -26,23 +26,23 @@ def main():
         if GPIO.event_detected(BEAM_1):
             print "Beam 1 Fall"
             beam1Fall = datetime.datetime.now()
-            if GPIO.input(BEAM_2):
-                #do nothing
-            else: 
+            #if other beam is tripped then don't do anything
+            if !(GPIO.input(BEAM_2)):
                 analyze_event(beam1Fall,beam2Fall)
+                
         if GPIO.event_detected(BEAM_2):
             print "Beam 2 Fall"
             beam2Fall = datetime.datetime.now()
-            if GPIO.input(BEAM_1):
-                #do nothing
-            else: 
+            print "Beam 2 Fall at " + beam2Fall
+            #if other beam is tripped then don't do anything
+            if !GPIO.input(BEAM_1):
                 analyze_event(beam1Fall,beam2Fall)
-            
             
 def gpio_setup():
     
     GPIO.setup(BEAM_1,GPIO.IN)
     #GPIO.add_event_detect(BEAM_1, GPIO.FALLING)
+    #GPIO.add_event_detect("XIO-P2", GPIO.FALLING, myfuncallback)
     GPIO.wait_for_edge(BEAM_1, GPIO.FALLING)
     
     GPIO.setup(BEAM_2,GPIO.IN)
