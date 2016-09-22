@@ -29,17 +29,17 @@ def main():
         if GPIO.event_detected(BEAM_1):
             #poll to see if this is a fall
             if GPIO.input(BEAM_1):
-                beam1Fall = datetime.datetime.now()                
+                beam1Fall = datetime.datetime.utcnow()                
 		print "Beam 1 Fall at " + beam1Fall.strftime("%Y-%m-%d %H:%M:%S")
                 #if other beam is tripped then don't do anything
                 if GPIO.input(BEAM_2):
-		    #TODO: this may prove to be unreliable if inbetween two beams. Revisit plausibility once field testing
+		            #TODO: this may prove to be unreliable if inbetween two beams. Revisit plausibility once field testing
                     analyze_event(beam1Fall,beam2Fall)
                 
         if GPIO.event_detected(BEAM_2):
             #poll to see if this is a fall
             if GPIO.input(BEAM_2):
-                beam2Fall = datetime.datetime.now()
+                beam2Fall = datetime.datetime.utcnow()
                 print "Beam 2 Fall at " + beam2Fall.strftime("%Y-%m-%d %H:%M:%S")
 
                 #if other beam is tripped then don't do anything
@@ -61,6 +61,14 @@ def gpio_setup():
 #    return
 
 def analyze_event(pBeam1Fall,pBeam2Fall): 
+    #NOTE: subtracting two datetime objects returns a timedelta object
+    deltaT = pBeam1Fall - pBeam2Fall
+    if deltaT.total_seconds() > 0:
+        print "Entry?" + deltaT.total_seconds ()
+    else:
+        print "Exit" + deltaT.total_seconds()
+    
+    
     print "Analyzing Event"
     return
 
