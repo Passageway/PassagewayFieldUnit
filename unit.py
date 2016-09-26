@@ -56,10 +56,6 @@ def gpio_setup():
     GPIO.add_event_detect(BEAM_2, GPIO.FALLING)
     #GPIO.add_event_detect(BEAM_2, GPIO.FALLING, myfuncallback)
 
-#python's datetime.now() performs this function completely
-#def set_time():
-#    return
-
 def analyze_event(pBeam1Fall,pBeam2Fall): 
     #NOTE: subtracting two datetime objects returns a timedelta object
     deltaT = pBeam1Fall - pBeam2Fall
@@ -70,14 +66,12 @@ def analyze_event(pBeam1Fall,pBeam2Fall):
        
     return
 
-#python handles this functionality completely with the > operator    
-#def is_time_greater(): 
-#    return
 
-#python handles this functionality completely with - operator
-#NOTE: using - operator on two datetime objects returns timedelta object
-#def has_different_time_micro(): 
-#    return
+#sched.scheduler() can be used to the same effect
+#initialize the object with: s = sched.scheduler(time.time, time.sleep)
+#then set just like an alarm with: s.enter(60, 1, alarmHandler, (arg1,arg2,...))
+def alarmHandler():
+    return
     
 def reset_time(): 
     return
