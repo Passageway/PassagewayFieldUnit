@@ -16,13 +16,16 @@ import threading
 BEAM_1 = "XIO-P0"
 BEAM_2 = "XIO-P1"
 
+entry_count = 0
+exit_count = 0
+
 def main():
     start = datetime.datetime.now()
     end = datetime.datetime.now()
     
-    print "set up scheduler"
-    asyncsendData()
-    print "scheduler will output in 60 seconds"
+    print "set up data send"
+    asyncSendData()
+    print "will output every 6 seconds"
     
     beam1Fall = datetime.datetime.min;
     beam2Fall = datetime.datetime.min;
@@ -66,23 +69,16 @@ def analyze_event(pBeam1Fall,pBeam2Fall):
     deltaT = pBeam1Fall - pBeam2Fall
     if deltaT.total_seconds() > 0:
         print "Entry\t" + "%s"%deltaT.total_seconds()
+        entry_count += 1
     else:
         print "Exit\t" + "%s"%deltaT.total_seconds()
-       
+        exit_count += 1
     return
 
-#sched.scheduler() can be used to the same effect
-#initialize the object with: s = sched.scheduler(time.time, time.sleep)
-#then set just like an alarm with: s.enter(60, 1, alarmHandler, (arg1,arg2,...))
-#def alarmHandler(pS):
-#    print "Hello World"
-#    pS.enter(60, 1, alarmHandler, (pS))
-#    return
-
-def asyncsendData():
-    print "Hello World"
-    # call f() again in 60 seconds
-    threading.Timer(6, asyncsendData).start()
+def asyncSendData():
+    print "Entries: " + str(entry_count) + "   Exits: " + str(exit_count)
+    # call f() again in 6 seconds
+    threading.Timer(6, asyncSendData).start()
     
 def reset_time(): 
     return
