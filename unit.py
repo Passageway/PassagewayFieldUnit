@@ -16,6 +16,8 @@ import threading
 BEAM_1 = "XIO-P0"
 BEAM_2 = "XIO-P1"
 SENDFREQ = 6
+MAXTHRESH = 1
+MINTHRESH = .01
 
 entry_count = 0
 exit_count = 0
@@ -66,8 +68,9 @@ def analyze_event(pBeam1Fall,pBeam2Fall):
     #NOTE: subtracting two datetime objects returns a timedelta object
     deltaT = pBeam1Fall - pBeam2Fall
     #threshold check
-    if abs(deltaT.total_seconds()) > 1 or abs(deltaT.total_seconds()) < .001:
-        return
+    if abs(deltaT.total_seconds()) > MAXTHRESH or abs(deltaT.total_seconds()) < MINTHRESH:
+        print "threshold broke, mofo" + "%s"%deltaT.total_seconds()
+	return
     if deltaT.total_seconds() > 0:
         print "Entry\t" + "%s"%deltaT.total_seconds()
         entry_count += 1
