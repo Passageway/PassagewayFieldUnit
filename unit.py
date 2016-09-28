@@ -15,7 +15,7 @@ import threading
 
 BEAM_1 = "XIO-P0"
 BEAM_2 = "XIO-P1"
-SENDFREQ = 60
+SENDFREQ = 6
 
 entry_count = 0
 exit_count = 0
@@ -39,7 +39,7 @@ def main():
             #poll to see if this is a fall
             if GPIO.input(BEAM_1):
                 beam1Fall = datetime.datetime.utcnow()                
-        		print "Beam 1 Fall at " + beam1Fall.strftime("%Y-%m-%d %H:%M:%S")
+        	print "Beam 1 Fall at " + beam1Fall.strftime("%Y-%m-%d %H:%M:%S")
                 #if other beam is tripped then don't do anything
                 if GPIO.input(BEAM_2):
 		            #TODO: this may prove to be unreliable if inbetween two beams. Revisit plausibility once field testing
@@ -65,6 +65,7 @@ def gpio_setup():
     #GPIO.add_event_detect(BEAM_2, GPIO.FALLING, myfuncallback)
 
 def analyze_event(pBeam1Fall,pBeam2Fall): 
+    global entry_count, exit_count
     #NOTE: subtracting two datetime objects returns a timedelta object
     deltaT = pBeam1Fall - pBeam2Fall
     if deltaT.total_seconds() > 0:
@@ -76,7 +77,11 @@ def analyze_event(pBeam1Fall,pBeam2Fall):
     return
 
 def asyncSendData():
+    global entry_count, exit_count
     print "Entries: " + str(entry_count) + "   Exits: " + str(exit_count)
+    
+    #entry_count = exit_count = 0
+
     # call asyncSendData() again in SENDFREQ seconds
     threading.Timer(SENDFREQ, asyncSendData).start()
     
