@@ -15,6 +15,7 @@ import threading
 
 BEAM_1 = "XIO-P0"
 BEAM_2 = "XIO-P1"
+SENDFREQ = 60
 
 entry_count = 0
 exit_count = 0
@@ -25,7 +26,7 @@ def main():
     
     print "set up data send"
     asyncSendData()
-    print "will output every 6 seconds"
+    print "will output every " + str(SENDFREQ) + " seconds"
     
     beam1Fall = datetime.datetime.min;
     beam2Fall = datetime.datetime.min;
@@ -77,8 +78,8 @@ def analyze_event(pBeam1Fall,pBeam2Fall):
 
 def asyncSendData():
     print "Entries: " + str(entry_count) + "   Exits: " + str(exit_count)
-    # call f() again in 6 seconds
-    threading.Timer(6, asyncSendData).start()
+    # call asyncSendData() again in SENDFREQ seconds
+    threading.Timer(SENDFREQ, asyncSendData).start()
     
 def reset_time(): 
     return
