@@ -42,7 +42,6 @@ def main():
         	print "Beam 1 Fall at " + beam1Fall.strftime("%Y-%m-%d %H:%M:%S")
                 #if other beam is tripped then don't do anything
                 if GPIO.input(BEAM_2):
-		            #TODO: this may prove to be unreliable if inbetween two beams. Revisit plausibility once field testing
                     analyze_event(beam1Fall,beam2Fall)
                 
         if GPIO.event_detected(BEAM_2):
@@ -58,16 +57,17 @@ def gpio_setup():
     
     GPIO.setup(BEAM_1,GPIO.IN)
     GPIO.add_event_detect(BEAM_1, GPIO.FALLING)
-    #GPIO.add_event_detect(BEAM_1, GPIO.FALLING, myfuncallback)
     
     GPIO.setup(BEAM_2,GPIO.IN)
     GPIO.add_event_detect(BEAM_2, GPIO.FALLING)
-    #GPIO.add_event_detect(BEAM_2, GPIO.FALLING, myfuncallback)
 
 def analyze_event(pBeam1Fall,pBeam2Fall): 
     global entry_count, exit_count
     #NOTE: subtracting two datetime objects returns a timedelta object
     deltaT = pBeam1Fall - pBeam2Fall
+    #threshold check
+    if abs(deltaT.total_seconds()) > 1 or abs(deltaT.total_seconds()) < .001:
+        return
     if deltaT.total_seconds() > 0:
         print "Entry\t" + "%s"%deltaT.total_seconds()
         entry_count += 1
@@ -84,9 +84,6 @@ def asyncSendData():
 
     # call asyncSendData() again in SENDFREQ seconds
     threading.Timer(SENDFREQ, asyncSendData).start()
-    
-def reset_time(): 
-    return
 
 if __name__ == "__main__":
     main()
