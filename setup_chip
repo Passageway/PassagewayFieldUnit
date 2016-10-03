@@ -24,10 +24,15 @@ install_chip_io() {
     sudo rm -rf CHIP_IO  
 }
 
+install_pyrebase() {
+    pip install pyrebase
+}
+
 main() {
     install_dependencies
     install_dtc
     install_chip_io
+    install_pyrebase
 }
 
 main
