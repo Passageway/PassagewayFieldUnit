@@ -23,7 +23,7 @@ import threading
 
 BEAM_1 = "XIO-P0"
 BEAM_2 = "XIO-P1"
-SENDFREQ = 6
+SENDFREQ = 20
 MAXTHRESH = 1
 MINTHRESH = .01
 
@@ -40,18 +40,18 @@ def main():
     firebase = firebase_setup()
     global db
     db = firebase.database()
-    print "Firebase is setup"
+    print("Firebase is setup")
     
     global mac
     mac = get_mac()
-    print "MAC Address obtained"
+    print("MAC Address obtained")
     
     gpio_setup()
-    print "GPIO is setup"
+    print("GPIO is setup")
     
     #send now as start of first interval
     asyncSendData(datetime.datetime.now())
-    print "Will output/send every " + str(SENDFREQ) + " seconds"
+    print("Will output/send every " + str(SENDFREQ) + " seconds")
     
     while True:
         if GPIO.event_detected(BEAM_1):
@@ -85,7 +85,7 @@ def firebase_setup():
         "authDomain": "project-8002914138129972242.firebaseapp.com",
         "databaseURL": "https://project-8002914138129972242.firebaseio.com",
         "storageBucket": "gs://project-8002914138129972242.appspot.com",
-        "serviceAccount": "Passageway-8255b66c169f.json"
+        "serviceAccount": "serviceCredentials.json"
     }
     return pyrebase.initialize_app(config)
 
@@ -95,24 +95,24 @@ def analyze_event(pBeam1Fall,pBeam2Fall):
     deltaT = pBeam1Fall - pBeam2Fall
     #threshold check
     if abs(deltaT.total_seconds()) > MAXTHRESH or abs(deltaT.total_seconds()) < MINTHRESH:
-        print "Timing threshold broke:\t" + "%s"%deltaT.total_seconds()
+        print("Timing threshold broke:\t" + "%s"%deltaT.total_seconds())
         return
     if deltaT.total_seconds() > 0:
-        print "Entry:\t" + "%s"%deltaT.total_seconds()
+        print("Entry:\t" + "%s"%deltaT.total_seconds())
         entry_count += 1
     else:
-        print "Exit:\t" + "%s"%deltaT.total_seconds()
+        print("Exit:\t" + "%s"%deltaT.total_seconds())
         exit_count += 1
 
 def asyncSendData(pStart):
     global entry_count, exit_count, db, mac
-    print "Entries: " + str(entry_count) + "   Exits: " + str(exit_count)
+    print("Entries: " + str(entry_count) + "   Exits: " + str(exit_count))
     #set end and start times
     end = datetime.datetime.now()
     start = pStart
     #setup data json and push
-    data = {"start": start,
-            "end": end,
+    data = {"start": str(start),
+            "end": str(end),
             "entry": entry_count,
             "exit": exit_count,
             "pid": mac}
@@ -120,7 +120,7 @@ def asyncSendData(pStart):
     #reset counts
     entry_count = exit_count = 0
     # call asyncSendData() again in SENDFREQ seconds
-    threading.Timer(SENDFREQ, asyncSendData(end)).start()
+    threading.Timer(SENDFREQ, asyncSendData,[end]).start()
 
 if __name__ == "__main__":
     main()
