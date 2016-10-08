@@ -25,7 +25,7 @@ install_chip_io() {
 }
 
 install_pyrebase() {
-    pip install pyrebase
+    sudo pip install pyrebase
 }
 
 main() {
