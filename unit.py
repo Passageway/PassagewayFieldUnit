@@ -98,7 +98,7 @@ def pull_data_config():
     for unit in units.each():
         print("Key: " + unit.key())
         print("Val: " + unit.val())
-        if (unit.key() == "cid" && unit.val() == str(mac))
+        if (unit.key() == "cid" and unit.val() == str(mac))
             print("We found our value: " + unit.val() + "!")
 
 def analyze_event(pBeam1Fall,pBeam2Fall): 
