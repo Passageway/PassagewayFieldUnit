@@ -94,7 +94,7 @@ def firebase_setup():
     
 def pull_data_config():
     global db
-    units = db.child("Units").get()
+    units = db.child("units").get()
     for unit in units.each():
         print("Key: " + unit.key())
         print("Val: " + unit.val())
@@ -128,7 +128,6 @@ def asyncSendData(pStart):
             "entry": entry_count,
             "exit": exit_count,
             "cid": mac}
-    db.child("Data").push(data)
     #reset counts
     entry_count = exit_count = 0
     # call asyncSendData() again in SENDFREQ seconds
