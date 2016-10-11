@@ -135,7 +135,7 @@ def analyze_event(pBeam1Fall,pBeam2Fall):
         else:
             print("Exit:\t" + "%s"%deltaT.total_seconds())
             exit_count += 1
-    else if direction == 1:
+    elif direction == 1:
         if deltaT.total_seconds() < 0:
             print("Entry:\t" + "%s"%deltaT.total_seconds())
             entry_count += 1
