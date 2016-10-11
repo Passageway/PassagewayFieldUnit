@@ -96,7 +96,10 @@ def pull_data_config():
     global db
     units = db.child("Units").get()
     for unit in units.each():
-        print(unit.val())
+        print("Key: " + unit.key())
+        print("Val: " + unit.val())
+        if (unit.key() == "cid" && unit.val() == str(mac))
+            print("We found our value: " + unit.val() + "!")
 
 def analyze_event(pBeam1Fall,pBeam2Fall): 
     global entry_count, exit_count
@@ -124,7 +127,7 @@ def asyncSendData(pStart):
             "end": str(end),
             "entry": entry_count,
             "exit": exit_count,
-            "pid": mac}
+            "cid": mac}
     db.child("Data").push(data)
     #reset counts
     entry_count = exit_count = 0
