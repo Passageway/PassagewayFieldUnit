@@ -20,6 +20,7 @@ from uuid import getnode as get_mac
 import pyrebase
 import datetime
 import threading
+import sys
 
 BEAM_1 = "XIO-P0"
 BEAM_2 = "XIO-P1"
@@ -45,6 +46,8 @@ def main():
     global mac
     mac = get_mac()
     print("MAC Address obtained")
+    
+    pull_data_config()
     
     gpio_setup()
     print("GPIO is setup")
@@ -88,6 +91,11 @@ def firebase_setup():
         "serviceAccount": "serviceCredentials.json"
     }
     return pyrebase.initialize_app(config)
+    
+def pull_data_config():
+    global db
+    units = db.child("users").get()
+    print(users.val()) # {"": {"name": "EOS"}}
 
 def analyze_event(pBeam1Fall,pBeam2Fall): 
     global entry_count, exit_count
