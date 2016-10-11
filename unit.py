@@ -118,7 +118,7 @@ def pull_data_config():
             "wing": "temp"}
         #push to firebase
         db.child("units").push(data)
-        print("We found our value: " + str(dict['cid']))
+        print("Unit not found. Pushing new unit: " + str(mac))
 
 def analyze_event(pBeam1Fall,pBeam2Fall): 
     global entry_count, exit_count
