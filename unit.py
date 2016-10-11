@@ -96,9 +96,9 @@ def pull_data_config():
     global db
     units = db.child("units").get()
     for unit in units.each():
-        print("Key: " + unit.key())
-        print("Val: " + unit.val())
-        if (unit.key() == "cid" and unit.val() == str(mac)):
+        dict = unit.val()
+        print("cid: " + dict['cid'] + " == " + str(mac))
+        if (dict['cid'] == str(mac)):
             print("We found our value: " + unit.val() + "!")
 
 def analyze_event(pBeam1Fall,pBeam2Fall): 
