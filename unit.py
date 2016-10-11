@@ -100,9 +100,8 @@ def pull_data_config():
     units = db.child("units").get()
     for unit in units.each():
         dict = unit.val()
-        print("cid: " + str(dict['cid']) + " == " + str(mac))
         if (dict['cid'] == mac):
-            print("We found our value: " + str(dict['cid']))
+            print("We found our unit: " + str(dict['cid']))
             direction = dict['direction']
             found = True
             break
@@ -119,6 +118,7 @@ def pull_data_config():
             "wing": "temp"}
         #push to firebase
         db.child("units").push(data)
+        print("We found our value: " + str(dict['cid']))
 
 def analyze_event(pBeam1Fall,pBeam2Fall): 
     global entry_count, exit_count
@@ -135,7 +135,7 @@ def analyze_event(pBeam1Fall,pBeam2Fall):
         else:
             print("Exit:\t" + "%s"%deltaT.total_seconds())
             exit_count += 1
-    else if direction == 1:
+    elif direction == 1:
         if deltaT.total_seconds() < 0:
             print("Entry:\t" + "%s"%deltaT.total_seconds())
             entry_count += 1
@@ -148,20 +148,21 @@ def analyze_event(pBeam1Fall,pBeam2Fall):
 
 def asyncSendData(pStart):
     global entry_count, exit_count, db, mac
-    print("Entries: " + str(entry_count) + "   Exits: " + str(exit_count))
-    #set end and start times
-    end = datetime.datetime.now()
-    start = pStart
-    #setup data json
-    data = {"start": str(start),
-            "end": str(end),
-            "entry": entry_count,
-            "exit": exit_count,
-            "cid": mac}
-    #push to firebase
-    db.child("data").push(data)
-    #reset counts
-    entry_count = exit_count = 0
+    if entry_count != 0 or exit_count != 0:
+        print("Entries: " + str(entry_count) + "   Exits: " + str(exit_count))
+        #set end and start times
+        end = datetime.datetime.now()
+        start = pStart
+        #setup data json
+        data = {"start": str(start),
+                "end": str(end),
+                "entry": entry_count,
+                "exit": exit_count,
+                "cid": mac}
+        #push to firebase
+        db.child("data").push(data)
+        #reset counts
+        entry_count = exit_count = 0
     # call asyncSendData() again in SENDFREQ seconds
     threading.Timer(SENDFREQ, asyncSendData,[end]).start()
 
