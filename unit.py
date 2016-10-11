@@ -94,8 +94,8 @@ def firebase_setup():
     
 def pull_data_config():
     global db
-    units = db.child("users").get()
-    print(users.val()) # {"": {"name": "EOS"}}
+    units = db.child("Units").get()
+    print(units.val()) # {"uniqueiden": {"name": "EOS"}}
 
 def analyze_event(pBeam1Fall,pBeam2Fall): 
     global entry_count, exit_count
