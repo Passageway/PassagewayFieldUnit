@@ -30,6 +30,7 @@ MINTHRESH = .01
 
 entry_count = 0
 exit_count = 0
+direction = None
 db = None
 mac = None
 
@@ -93,13 +94,31 @@ def firebase_setup():
     return pyrebase.initialize_app(config)
     
 def pull_data_config():
-    global db
+    global db, direction
+    found = False
+    
     units = db.child("units").get()
     for unit in units.each():
         dict = unit.val()
         print("cid: " + str(dict['cid']) + " == " + str(mac))
         if (dict['cid'] == mac):
-            print("We found our value: " + unit.val() + "!")
+            print("We found our value: " + str(dict['cid']))
+            direction = dict['direction']
+            found = True
+            break
+    if not found:
+        #direction defaults to 0
+        direction = 0
+        #set up this unit on firebase
+        data = {"building": "temp",
+            "cid": mac,
+            "direction": 0,
+            "floor": 1,
+            "gps": "0,0",
+            "name": "temp",
+            "wing": "temp"}
+        #push to firebase
+        db.child("units").push(data)
 
 def analyze_event(pBeam1Fall,pBeam2Fall): 
     global entry_count, exit_count
@@ -109,12 +128,23 @@ def analyze_event(pBeam1Fall,pBeam2Fall):
     if abs(deltaT.total_seconds()) > MAXTHRESH or abs(deltaT.total_seconds()) < MINTHRESH:
         print("Timing threshold broke:\t" + "%s"%deltaT.total_seconds())
         return
-    if deltaT.total_seconds() > 0:
-        print("Entry:\t" + "%s"%deltaT.total_seconds())
-        entry_count += 1
+    if direction == 0:
+        if deltaT.total_seconds() > 0:
+            print("Entry:\t" + "%s"%deltaT.total_seconds())
+            entry_count += 1
+        else:
+            print("Exit:\t" + "%s"%deltaT.total_seconds())
+            exit_count += 1
+    else if direction == 1:
+        if deltaT.total_seconds() < 0:
+            print("Entry:\t" + "%s"%deltaT.total_seconds())
+            entry_count += 1
+        else:
+            print("Exit:\t" + "%s"%deltaT.total_seconds())
+            exit_count += 1
     else:
-        print("Exit:\t" + "%s"%deltaT.total_seconds())
-        exit_count += 1
+        print("Direction not correctly configured")
+        quit()
 
 def asyncSendData(pStart):
     global entry_count, exit_count, db, mac
@@ -122,12 +152,14 @@ def asyncSendData(pStart):
     #set end and start times
     end = datetime.datetime.now()
     start = pStart
-    #setup data json and push
+    #setup data json
     data = {"start": str(start),
             "end": str(end),
             "entry": entry_count,
             "exit": exit_count,
             "cid": mac}
+    #push to firebase
+    db.child("data").push(data)
     #reset counts
     entry_count = exit_count = 0
     # call asyncSendData() again in SENDFREQ seconds
