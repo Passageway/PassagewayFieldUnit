@@ -148,10 +148,10 @@ def analyze_event(pBeam1Fall,pBeam2Fall):
 
 def asyncSendData(pStart):
     global entry_count, exit_count, db, mac
+    end = datetime.datetime.now()
     if entry_count != 0 or exit_count != 0:
         print("Entries: " + str(entry_count) + "   Exits: " + str(exit_count))
         #set end and start times
-        end = datetime.datetime.now()
         start = pStart
         #setup data json
         data = {"start": str(start),
