@@ -36,8 +36,8 @@ mac = None
 
 def main():
     #initialize beam falls
-    beam1Fall = datetime.datetime.min;
-    beam2Fall = datetime.datetime.min;
+    beam1Rise = datetime.datetime.min;
+    beam2Rise = datetime.datetime.min;
     
     firebase = firebase_setup()
     global db
@@ -60,27 +60,27 @@ def main():
     while True:
         if GPIO.event_detected(BEAM_1):
             #poll to see if this is a fall
-            if GPIO.input(BEAM_1):
-                beam1Fall = datetime.datetime.utcnow()                
-        	    #print "Beam 1 Fall at " + beam1Fall.strftime("%Y-%m-%d %H:%M:%S")
+            if not GPIO.input(BEAM_1):
+                beam1Rise = datetime.datetime.utcnow()
+                print "Beam 1 Rise at " + beam1Rise.strftime("%Y-%m-%d %H:%M:%S")
                 #if other beam is tripped then don't do anything
                 if GPIO.input(BEAM_2):
-                    analyze_event(beam1Fall,beam2Fall)
+                    analyze_event(beam1Rise,beam2Rise)
                 
         if GPIO.event_detected(BEAM_2):
             #poll to see if this is a fall
-            if GPIO.input(BEAM_2):
-                beam2Fall = datetime.datetime.utcnow()
-                #print "Beam 2 Fall at " + beam2Fall.strftime("%Y-%m-%d %H:%M:%S")
+            if not GPIO.input(BEAM_2):
+                beam2Rise = datetime.datetime.utcnow()
+                print "Beam 2 Rise at " + beam2Rise.strftime("%Y-%m-%d %H:%M:%S")
                 #if other beam is tripped then don't do anything
                 if GPIO.input(BEAM_1):
-                    analyze_event(beam1Fall,beam2Fall)
+                    analyze_event(beam1Rise,beam2Rise)
             
 def gpio_setup():
     GPIO.setup(BEAM_1,GPIO.IN)
-    GPIO.add_event_detect(BEAM_1, GPIO.FALLING)
+    GPIO.add_event_detect(BEAM_1, GPIO.RISING)
     GPIO.setup(BEAM_2,GPIO.IN)
-    GPIO.add_event_detect(BEAM_2, GPIO.FALLING)
+    GPIO.add_event_detect(BEAM_2, GPIO.RISING)
     
 def firebase_setup():
     txt = open("apiKey.txt")
@@ -120,10 +120,10 @@ def pull_data_config():
         db.child("units").push(data)
         print("Unit not found. Pushing new unit: " + str(mac))
 
-def analyze_event(pBeam1Fall,pBeam2Fall): 
+def analyze_event(pBeam1Rise,pBeam2Rise): 
     global entry_count, exit_count
     #NOTE: subtracting two datetime objects returns a timedelta object
-    deltaT = pBeam1Fall - pBeam2Fall
+    deltaT = pBeam1Rise - pBeam2Rise
     #threshold check
     if abs(deltaT.total_seconds()) > MAXTHRESH or abs(deltaT.total_seconds()) < MINTHRESH:
         print("Timing threshold broke:\t" + "%s"%deltaT.total_seconds())
