@@ -39,6 +39,8 @@ def main():
     #initialize beam falls
     beam1Rise = datetime.datetime.min;
     beam2Rise = datetime.datetime.min;
+    beam1LastRise = datetime.datetime.min;
+    beam2LastRise = datetime.datetime.min;
     
     firebase = firebase_setup()
     global db
@@ -61,8 +63,10 @@ def main():
     while True:
         if GPIO.event_detected(BEAM_1):
             #poll to see if this is a fall
-            if not GPIO.input(BEAM_1) and (datetime.datetime.utcnow() - beam1Rise).total_seconds() > RISETHRESH:
-                beam1Rise = datetime.datetime.utcnow()
+            beam1LastRise = beam1Rise
+            beam1Rise = datetime.datetime.utcnow()
+            if not GPIO.input(BEAM_1) and (beam1Rise - beam1LastRise).total_seconds() > RISETHRESH:
+                print("-----Beam 1 Rise " + "%s"%(beam1Rise - beam1LastRise).total_seconds())
                 #print ("-----Beam 1 Rise")
                 #if other beam is tripped then don't do anything
                 if not GPIO.input(BEAM_2):
