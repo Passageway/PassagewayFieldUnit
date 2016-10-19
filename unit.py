@@ -26,7 +26,8 @@ BEAM_1 = "XIO-P0"
 BEAM_2 = "XIO-P1"
 SENDFREQ = 20
 MAXTHRESH = 1
-MINTHRESH = .01
+MINTHRESH = 0.01
+RISETHRESH = .5
 
 entry_count = 0
 exit_count = 0
@@ -45,7 +46,7 @@ def main():
     print("Firebase is setup")
     
     global mac
-    mac = get_mac()
+    mac = hex(get_mac())
     print("MAC Address obtained")
     
     pull_data_config()
@@ -60,20 +61,20 @@ def main():
     while True:
         if GPIO.event_detected(BEAM_1):
             #poll to see if this is a fall
-            if not GPIO.input(BEAM_1):
+            if not GPIO.input(BEAM_1) and (datetime.datetime.utcnow() - beam1Rise).total_seconds() > RISETHRESH:
                 beam1Rise = datetime.datetime.utcnow()
-                print "Beam 1 Rise at " + beam1Rise.strftime("%Y-%m-%d %H:%M:%S")
+                #print ("-----Beam 1 Rise")
                 #if other beam is tripped then don't do anything
-                if GPIO.input(BEAM_2):
+                if not GPIO.input(BEAM_2):
                     analyze_event(beam1Rise,beam2Rise)
                 
         if GPIO.event_detected(BEAM_2):
             #poll to see if this is a fall
-            if not GPIO.input(BEAM_2):
+            if not GPIO.input(BEAM_2) and (datetime.datetime.utcnow() - beam2Rise).total_seconds() > RISETHRESH:
                 beam2Rise = datetime.datetime.utcnow()
-                print "Beam 2 Rise at " + beam2Rise.strftime("%Y-%m-%d %H:%M:%S")
+                #print ("-----Beam 2 Rise")
                 #if other beam is tripped then don't do anything
-                if GPIO.input(BEAM_1):
+                if not GPIO.input(BEAM_1):
                     analyze_event(beam1Rise,beam2Rise)
             
 def gpio_setup():
@@ -113,7 +114,8 @@ def pull_data_config():
             "cid": mac,
             "direction": 0,
             "floor": 1,
-            "gps": "0,0",
+            "lat": 0,
+            "lon": 0,
             "name": "temp",
             "wing": "temp"}
         #push to firebase
@@ -162,7 +164,7 @@ def asyncSendData(pStart):
         #push to firebase
         db.child("data").push(data)
         #reset counts
-        entry_count = exit_count = 0
+        #entry_count = exit_count = 0
     # call asyncSendData() again in SENDFREQ seconds
     threading.Timer(SENDFREQ, asyncSendData,[end]).start()
 
