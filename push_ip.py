@@ -2,6 +2,7 @@ import socket
 import fcntl
 import struct
 import pyrebase
+from uuid import getnode as get_mac
 
 db = None
 mac = None
@@ -12,6 +13,10 @@ def main():
     global ip
     ip = get_ip_address("wlan0")
     print("IP Address obtained: " + ip)
+    
+    global mac
+    mac = hex(get_mac())
+    print("MAC Address obtained")
     
     firebase = firebase_setup()
     global db
