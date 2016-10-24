@@ -170,7 +170,7 @@ def asyncSendData(pStart):
         #push to firebase
         db.child("data").push(data)
         #reset counts
-        #entry_count = exit_count = 0
+        entry_count = exit_count = 0
     # call asyncSendData() again in SENDFREQ seconds
     threading.Timer(SENDFREQ, asyncSendData,[end]).start()
 
