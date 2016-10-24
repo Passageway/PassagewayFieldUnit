@@ -59,7 +59,7 @@ def firebase_setup():
         "authDomain": "project-8002914138129972242.firebaseapp.com",
         "databaseURL": "https://project-8002914138129972242.firebaseio.com",
         "storageBucket": "gs://project-8002914138129972242.appspot.com",
-        "serviceAccount": "serviceCredentials.json"
+        "serviceAccount": "/home/chip/Passageway/Unit/serviceCredentials.json"
     }
     return pyrebase.initialize_app(config)
 
