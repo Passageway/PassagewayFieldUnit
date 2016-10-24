@@ -33,7 +33,6 @@ def update_ip():
         dict = unit.val()
         if (dict['cid'] == mac):
             #update firebase entry
-            #data = unit.val()
             data = {"ip": ip}
             db.child("units").child(unit.key()).update(data)
             found = True
@@ -54,7 +53,7 @@ def update_ip():
         print("Unit not found. Pushing new unit: " + str(mac))
  
 def firebase_setup():
-    txt = open("apiKey.txt")
+    txt = open("/home/chip/Passageway/Unit/apiKey.txt")
     config = {
         "apiKey": txt.read(),
         "authDomain": "project-8002914138129972242.firebaseapp.com",
