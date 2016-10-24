@@ -22,6 +22,8 @@ def main():
     global db
     db = firebase.database()
     print("Firebase is setup")
+    
+    update_ip()
   
 def update_ip():    
     found = False
@@ -30,12 +32,12 @@ def update_ip():
     for unit in units.each():
         dict = unit.val()
         if (dict['cid'] == mac):
-            print("We found our unit: " + str(dict['cid']))
             #update firebase entry
             #data = unit.val()
             data = {"ip": ip}
             db.child("units").child(unit.key()).update(data)
             found = True
+            print("We found our unit: " + str(dict['cid']) + " Updating IP Address")
             break
     if not found:
         #push to firebase

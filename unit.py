@@ -108,15 +108,16 @@ def pull_data_config():
     for unit in units.each():
         dict = unit.val()
         if (dict['cid'] == mac):
-            print("We found our unit: " + str(dict['cid']))
             direction = dict['direction']
             found = True
+            print("We found our unit: " + str(dict['cid']) + " direction obtained")
             break
     if not found:
         #direction defaults to 0
         direction = 0
         #set up this unit on firebase
         data = {"building": "temp",
+            "ip": "temp",
             "cid": mac,
             "direction": 0,
             "floor": 1,
