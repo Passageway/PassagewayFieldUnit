@@ -53,13 +53,13 @@ def update_ip():
         print("Unit not found. Pushing new unit: " + str(mac))
  
 def firebase_setup():
-    txt = open("/home/chip/Passageway/Unit/apiKey.txt")
+    txt = open("/home/chip/Passageway/PassagewayFieldUnit/apiKey.txt")
     config = {
         "apiKey": txt.read(),
         "authDomain": "project-8002914138129972242.firebaseapp.com",
         "databaseURL": "https://project-8002914138129972242.firebaseio.com",
         "storageBucket": "gs://project-8002914138129972242.appspot.com",
-        "serviceAccount": "/home/chip/Passageway/Unit/serviceCredentials.json"
+        "serviceAccount": "/home/chip/Passageway/PassagewayFieldUnit/serviceCredentials.json"
     }
     return pyrebase.initialize_app(config)
 
