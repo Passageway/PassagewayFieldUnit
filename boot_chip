@@ -1,1 +1,4 @@
 #!/bin/bash
+echo "reboot some script" >> /home/chip/Passageway/Unit/test.txt
+python3 /home/chip/Passageway/Unit/push_ip.py >> /home/chip/Passageway/Unit/test.txt
+
