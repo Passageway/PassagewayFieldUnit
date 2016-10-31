@@ -166,10 +166,9 @@ def asyncSendData(pStart):
         data = {"start": str(start),
                 "end": str(end),
                 "entry": entry_count,
-                "exit": exit_count,
-                "cid": mac}
+                "exit": exit_count}
         #push to firebase
-        db.child("data").push(data)
+        db.child("data").child(mac).push(data)
         #reset counts
         entry_count = exit_count = 0
     # call asyncSendData() again in SENDFREQ seconds

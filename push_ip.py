@@ -30,26 +30,24 @@ def update_ip():
 
     units = db.child("units").get()
     for unit in units.each():
-        dict = unit.val()
-        if (dict['cid'] == mac):
+        if (unit.key() == mac):
             #update firebase entry
             data = {"ip": ip}
             db.child("units").child(unit.key()).update(data)
             found = True
-            print("We found our unit: " + str(dict['cid']) + " Updating IP Address")
+            print("We found our unit: " + mac + " Updating IP Address")
             break
     if not found:
         #push to firebase
         data = {"building": "temp",
             "ip": ip,
-            "cid": mac,
             "direction": 0,
             "floor": 1,
             "lat": 0,
             "lon": 0,
             "name": "temp",
             "wing": "temp"}
-        db.child("units").push(data)
+        db.child("units").child(mac).push(data)
         print("Unit not found. Pushing new unit: " + str(mac))
  
 def firebase_setup():
@@ -63,6 +61,8 @@ def firebase_setup():
     }
     return pyrebase.initialize_app(config)
 
+#Credit to stack overflow user Martin Konecny
+#Code obtained from http://stackoverflow.com/questions/24196932/how-can-i-get-the-ip-address-of-eth0-in-python
 def get_ip_address(ifname):
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     return socket.inet_ntoa(fcntl.ioctl(
