@@ -1,1 +1,4 @@
 #!/bin/bash
+echo "reboot script" >> /home/chip/Passageway/PassagewayFieldUnit/boot_log.txt
+python3 /home/chip/Passageway/PassagewayFieldUnit/push_ip.py >> /home/chip/Passageway/PassagewayFieldUnit/boot_log.txt
+

@@ -1,5 +1,5 @@
 __pycache__/
 apiKey.txt
-nohup.out
 serviceCredentials.json
-unitLog.txt
+unit_log.txt
+boot_log.txt
