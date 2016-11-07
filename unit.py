@@ -117,10 +117,10 @@ def pull_data_config():
     
     units = db.child("units").get()
     for unit in units.each():
-        dict = unit.val()
-        if (dict['cid'] == mac):
-            print("We found our unit: " + str(dict['cid']))
-            direction = dict['direction']
+        dataDict = unit.val()
+        if (unit.key() == mac):
+            print("We found our unit: " + str(unit.key())
+            direction = dataDict['direction']
             found = True
             break
     if not found:
