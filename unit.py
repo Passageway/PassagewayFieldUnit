@@ -74,6 +74,7 @@ def main():
             beam1Fall = datetime.datetime.utcnow()
             #beam1LastRise = beam1Rise
             #beam1Rise = datetime.datetime.utcnow()
+            print ("Event beam1 at " + str(datetime.datetime.utcnow()))
             if GPIO.input(BEAM_1) and (beam1Fall - beam1LastFall).total_seconds() > RISETHRESH:
                 print("-----Beam 1 Fall: " + "%s"%(beam1Fall - beam1LastFall).total_seconds())
                 #print ("-----Beam 1 Rise")
@@ -87,6 +88,7 @@ def main():
             beam2Fall = datetime.datetime.utcnow()
             #beam2LastRise = beam2Rise
             #beam2Rise = datetime.datetime.utcnow()
+            print ("Event beam2 at " + str(datetime.datetime.utcnow()))
             if GPIO.input(BEAM_2) and (beam2Fall - beam2LastFall).total_seconds() > RISETHRESH:
                 print("-----Beam 2 Fall: " + "%s"%(beam2Fall - beam2LastFall).total_seconds())
                 #print ("-----Beam 2 Rise")
@@ -119,7 +121,7 @@ def pull_data_config():
     for unit in units.each():
         dataDict = unit.val()
         if (unit.key() == mac):
-            print("We found our unit: " + str(unit.key())
+            print("We found our unit: " + str(unit.key()))
             direction = dataDict['direction']
             found = True
             break
