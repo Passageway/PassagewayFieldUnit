@@ -26,7 +26,7 @@ BEAM_1 = "XIO-P0"
 BEAM_2 = "XIO-P1"
 SENDFREQ = 20
 MAXTHRESH = 1
-MINTHRESH = 0.01
+MINTHRESH = 0 #0.01
 RISETHRESH = .5
 
 entry_count = 0
@@ -107,10 +107,10 @@ def pull_data_config():
     units = db.child("units").get()
     for unit in units.each():
         dict = unit.val()
-        if (dict['cid'] == mac):
+        if (unit.key() == mac):
             direction = dict['direction']
             found = True
-            print("We found our unit: " + str(dict['cid']) + " direction obtained")
+            print("We found our unit: " + str(unit.key()) + " direction obtained")
             break
     if not found:
         #direction defaults to 0
@@ -118,7 +118,6 @@ def pull_data_config():
         #set up this unit on firebase
         data = {"building": "temp",
             "ip": "temp",
-            "cid": mac,
             "direction": 0,
             "floor": 1,
             "lat": 0,
@@ -126,7 +125,7 @@ def pull_data_config():
             "name": "temp",
             "wing": "temp"}
         #push to firebase
-        db.child("units").push(data)
+        db.child("units").child(mac).push(data)
         print("Unit not found. Pushing new unit: " + str(mac))
 
 def analyze_event(pBeam1Rise,pBeam2Rise): 
