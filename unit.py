@@ -61,6 +61,18 @@ def main():
     print("Will output/send every " + str(SENDFREQ) + " seconds")
     
     while True:
+        if GPIO.event_detected(BEAM_2):
+            #poll to see if this is a rise
+            if not GPIO.input(BEAM_2):
+                beam2LastRise = beam2Rise
+                beam2Rise = datetime.datetime.utcnow()
+                print("-----Beam 2 Rise: " + str(beam2Rise))
+                if (beam2Rise - beam2LastRise).total_seconds() < RISETHRESH:
+                        continue
+                #if other beam is not tripped then don't do anything
+                if not GPIO.input(BEAM_1):
+                    analyze_event(beam1Rise,beam2Rise)
+                    
         if GPIO.event_detected(BEAM_1):
             #poll to see if this is a fall
             if not GPIO.input(BEAM_1):
@@ -73,17 +85,7 @@ def main():
                 if not GPIO.input(BEAM_2):
                     analyze_event(beam1Rise,beam2Rise)
                 
-        if GPIO.event_detected(BEAM_2):
-            #poll to see if this is a rise
-            if not GPIO.input(BEAM_2):
-                beam2LastRise = beam2Rise
-                beam2Rise = datetime.datetime.utcnow()
-                print("-----Beam 2 Rise: " + str(beam2Rise))
-                if (beam2Rise - beam2LastRise).total_seconds() < RISETHRESH:
-                        continue
-                #if other beam is not tripped then don't do anything
-                if not GPIO.input(BEAM_1):
-                    analyze_event(beam1Rise,beam2Rise)
+
             
 def gpio_setup():
     GPIO.setup(BEAM_1,GPIO.IN)
