@@ -63,22 +63,24 @@ def main():
     while True:
         if GPIO.event_detected(BEAM_1):
             #poll to see if this is a fall
-            beam1LastRise = beam1Rise
-            beam1Rise = datetime.datetime.utcnow()
-            if not GPIO.input(BEAM_1) and (beam1Rise - beam1LastRise).total_seconds() > RISETHRESH:
-                print("-----Beam 1 Rise: " + "%s"%(beam1Rise - beam1LastRise).total_seconds())
-                #print ("-----Beam 1 Rise")
+            if not GPIO.input(BEAM_1):
+                beam1LastRise = beam1Rise
+                beam1Rise = datetime.datetime.utcnow()
+                print("-----Beam 1 Rise: " + str(beam1Rise))
+                if (beam1Rise - beam1LastRise).total_seconds() < RISETHRESH:
+                        continue
                 #if other beam is not tripped then don't do anything
                 if not GPIO.input(BEAM_2):
                     analyze_event(beam1Rise,beam2Rise)
                 
         if GPIO.event_detected(BEAM_2):
             #poll to see if this is a rise
-            beam2LastRise = beam2Rise
-            beam2Rise = datetime.datetime.utcnow()
-            if not GPIO.input(BEAM_2) and (beam2Rise - beam2LastRise).total_seconds() > RISETHRESH:
-                print("-----Beam 2 Rise: " + "%s"%(beam2Rise - beam2LastRise).total_seconds())
-                #print ("-----Beam 2 Rise")
+            if not GPIO.input(BEAM_2):
+                beam2LastRise = beam2Rise
+                beam2Rise = datetime.datetime.utcnow()
+                print("-----Beam 2 Rise: " + str(beam2Rise))
+                if (beam2Rise - beam2LastRise).total_seconds() < RISETHRESH:
+                        continue
                 #if other beam is not tripped then don't do anything
                 if not GPIO.input(BEAM_1):
                     analyze_event(beam1Rise,beam2Rise)
@@ -135,6 +137,7 @@ def analyze_event(pBeam1Rise,pBeam2Rise):
     #threshold check
     if abs(deltaT.total_seconds()) > MAXTHRESH or abs(deltaT.total_seconds()) < MINTHRESH:
         print("Timing threshold broke:\t" + "%s"%deltaT.total_seconds())
+        print("From comparing: " + str(pBeam1Rise) + "\tto\t" + str(pBeam2Rise))
         return
     if direction == 0:
         if deltaT.total_seconds() > 0:
